@@ -5,9 +5,15 @@ from flask import Flask, send_from_directory, render_template, request, session
 app = Flask(__name__, template_folder= "template")
 init_db(app)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # secret key
+
+
+logged_in_playerID = 0;
+
+
 @app.route("/",methods=["GET"])
 def start_page():
     return send_from_directory("static","index.html")
+
 
 
 
@@ -59,10 +65,11 @@ def get_bookings():
 def book_game():
 
     
-    player_id = request.form["player_id"]
+    player_id = session["player_id"]
     date = request.form["date"]
     lane_id = request.form["lane_id"]
     start_time = request.form["start_time"]
+    print("lane ID: " + lane_id)
 
 
     booking = query_db("SELECT * from Bookings WHERE date = ? and laneID = ? and startTime = ?", [date, lane_id, start_time], one=True)
@@ -80,9 +87,22 @@ def book_game():
 
 
 
+@app.route("/booked_games")
+def show_booked_games():
+    player_ID = session["player_id"]
+    return render_template("bookings.html", bookings=query_db('SELECT * FROM Bookings INNER JOIN BowlingLanes ON Bookings.LaneID = BowlingLanes.laneID  WHERE playerID = ?', [player_ID]))
 
 
-
+@app.route("/previous_games", methods=["GET"])
+def show_previous_games():
+    player_ID = session["player_id"]
+    #query_db("INSERT INTO previousGames(date, score, playerID) VALUES ('2020-01-11', 360, ?) ", [player_ID])
+    num=query_db('SELECT SUM(?) AS numOfGames FROM previousGames WHERE playerID = ? GROUP BY playerID ',[player_ID, player_ID])
+    num = [dict(row) for row in num]
+    print(num)
+    return render_template("previous_games.html", previousGames=query_db('SELECT * FROM previousGames'), 
+                           numOfGames=query_db('SELECT COUNT(?) AS numOfGames FROM previousGames WHERE playerID = ? GROUP BY playerID ',[player_ID, player_ID]))
+    
 
 
 @app.route("/<path:filename>", methods=["GET"])

@@ -20,29 +20,25 @@
     </style>
 </head>
 <body>
-    <h1>Booking  List</h1>
+    {% for num in numOfGames %}
+    <h1>Previous Games List {{num['numOfGames']}}</h1>
+    {% endfor %}
     <table>
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Start time</th>
-                <th>End time</th>
-                <th>laneID</th>
-                <th>player ID</th>
-                <th>Date</th>
-                <th>Lane Name</th>
+                <th>gameID</th>
+                <th>date</th>
+                <th>score</th>
+                <th>playerID</th>
             </tr>
         </thead>
         <tbody>
-            {% for booking in bookings %}
+            {% for game in previousGames %}
             <tr>
-                <td>{{ booking['bookingID'] }}</td>
-                <td>{{ booking['startTime'] }}</td>
-                <td>{{ booking['endTime'] }}</td>
-                <td>{{ booking['laneID'] }}</td>
-                <td>{{ booking['playerID'] }}</td>
-                <td>{{ booking['date'] }}</td>
-                <td>{{ booking['laneName'] }}</td>
+                <td>{{ game['gameID'] }}</td>
+                <td>{{ game['date'] }}</td>
+                <td>{{ game['score'] }}</td>
+                <td>{{ game['playerID'] }}</td>
             </tr>
             {% endfor %}
         </tbody>
