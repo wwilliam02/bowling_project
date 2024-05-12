@@ -7,8 +7,6 @@ init_db(app)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/' # secret key
 
 
-logged_in_playerID = 0;
-
 
 @app.route("/",methods=["GET"])
 def start_page():
@@ -33,7 +31,7 @@ def login():
         return render_template("login.html", error_message = error_message)
     else:
         session["player_id"] = player["PlayerID"]
-        session["player_fname"] = player["Fname"]
+        session["Fname"] = player["Fname"]
         print("player: ", player["Fname"])
         return render_template("logged_in.html", player=player["Fname"])
 
@@ -60,6 +58,9 @@ def get_book_game():
 def get_bookings():
     return render_template("bookings.html", bookings=query_db('SELECT * FROM Bookings'))
 
+@app.route("/logged_in")
+def show_logged_in():
+    return render_template("logged_in.html", player=session["Fname"])
 
 @app.route('/book_game', methods=["POST"])
 def book_game():
@@ -96,11 +97,9 @@ def show_booked_games():
 @app.route("/previous_games", methods=["GET"])
 def show_previous_games():
     player_ID = session["player_id"]
-    #query_db("INSERT INTO previousGames(date, score, playerID) VALUES ('2020-01-11', 360, ?) ", [player_ID])
-    num=query_db('SELECT SUM(?) AS numOfGames FROM previousGames WHERE playerID = ? GROUP BY playerID ',[player_ID, player_ID])
-    num = [dict(row) for row in num]
-    print(num)
-    return render_template("previous_games.html", previousGames=query_db('SELECT * FROM previousGames'), 
+    # query_db("INSERT INTO previousGames(date, score, playerID) VALUES ('2020-01-11', 360, ?) ", [player_ID], commit=True)
+    
+    return render_template("previous_games.html", previousGames=query_db('SELECT * FROM previousGames WHERE playerID = ?', [player_ID]), 
                            numOfGames=query_db('SELECT COUNT(?) AS numOfGames FROM previousGames WHERE playerID = ? GROUP BY playerID ',[player_ID, player_ID]))
     
 

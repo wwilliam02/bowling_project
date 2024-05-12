@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         table {
             width: 100%;
@@ -20,28 +21,50 @@
     </style>
 </head>
 <body>
-    {% for num in numOfGames %}
-    <h1>Previous Games List {{num['numOfGames']}}</h1>
-    {% endfor %}
-    <table>
-        <thead>
-            <tr>
-                <th>gameID</th>
-                <th>date</th>
-                <th>score</th>
-                <th>playerID</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for game in previousGames %}
-            <tr>
-                <td>{{ game['gameID'] }}</td>
-                <td>{{ game['date'] }}</td>
-                <td>{{ game['score'] }}</td>
-                <td>{{ game['playerID'] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="/logged_in">Bowling App</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/book_game">Book Game</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/booked_games">Booked Games</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/previous_games">Previous Games</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% for num in numOfGames %}
+            <h1>Previous Games List, Total played games: {{num['numOfGames']}}</h1>
+        {% endfor %}
+        <table>
+            <thead>
+                <tr>
+                    <th>gameID</th>
+                    <th>date</th>
+                    <th>score</th>
+                    <th>playerID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in previousGames %}
+                    <tr>
+                        <td>{{ game['gameID'] }}</td>
+                        <td>{{ game['date'] }}</td>
+                        <td>{{ game['score'] }}</td>
+                        <td>{{ game['playerID'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

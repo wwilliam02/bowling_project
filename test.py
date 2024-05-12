@@ -20,7 +20,6 @@ def close_db(exception=None):
 
 def query_db(query, args=(), one=False, commit=False):
     if commit:
-        print("commit")
         db = get_db()
         cur = db.execute(query, args)
         db.commit()
