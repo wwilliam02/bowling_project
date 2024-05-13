@@ -48,10 +48,7 @@ def logout():
     session.clear()
     return send_from_directory("static", "index.html")
 
-@app.route('/book_game', methods=["GET"])
-def get_book_game():
-    lanes = query_db("SELECT * FROM bowlingLanes")
-    return render_template("book_game.html", lanes=lanes )
+
 
 
 @app.route('/bookings', methods=["GET"])
@@ -62,6 +59,12 @@ def get_bookings():
 def show_logged_in():
     return render_template("logged_in.html", player=session["Fname"])
 
+
+@app.route('/book_game', methods=["GET"])
+def get_book_game():
+    lanes = query_db("SELECT * FROM bowlingLanes")
+    return render_template("book_game.html", lanes=lanes, bookings=query_db("SELECT * FROM bookings INNER JOIN players ON bookings.playerID = players.playerID" ) )
+
 @app.route('/book_game', methods=["POST"])
 def book_game():
 
@@ -70,20 +73,21 @@ def book_game():
     date = request.form["date"]
     lane_id = request.form["lane_id"]
     start_time = request.form["start_time"]
-    print("lane ID: " + lane_id)
+    
 
 
     booking = query_db("SELECT * from Bookings WHERE date = ? and laneID = ? and startTime = ?", [date, lane_id, start_time], one=True)
 
     if booking == None:
         #free lane
+        # fixa så vi får error print på hemsidan
         query_db("INSERT INTO bookings (startTime, endTime, laneID, playerID, date) VALUES(?, strftime('%H:%M',?, '+1 hour'), ?, ?, ?) ", [start_time, start_time, lane_id, player_id, date], commit=True)
         
-    
-        return render_template("book_game.html", booked=False, date=date, lane_id=lane_id, start_time=start_time)
+
+        return render_template("book_game.html", booked=False, date=date, lane_id=lane_id, start_time=start_time,lanes=query_db("SELECT * FROM bowlingLanes"))
     else:
         #already booked 
-        return render_template("book_game.html", booked=True)
+        return render_template("book_game.html", booked=True,lanes=query_db("SELECT * FROM bowlingLanes"))
 
 
 
@@ -91,6 +95,7 @@ def book_game():
 @app.route("/booked_games")
 def show_booked_games():
     player_ID = session["player_id"]
+    # har koll på lane id på spelarens id
     return render_template("bookings.html", bookings=query_db('SELECT * FROM Bookings INNER JOIN BowlingLanes ON Bookings.LaneID = BowlingLanes.laneID  WHERE playerID = ?', [player_ID]))
 
 
@@ -98,9 +103,10 @@ def show_booked_games():
 def show_previous_games():
     player_ID = session["player_id"]
     # query_db("INSERT INTO previousGames(date, score, playerID) VALUES ('2020-01-11', 360, ?) ", [player_ID], commit=True)
-    
-    return render_template("previous_games.html", previousGames=query_db('SELECT * FROM previousGames WHERE playerID = ?', [player_ID]), 
-                           numOfGames=query_db('SELECT COUNT(?) AS numOfGames FROM previousGames WHERE playerID = ? GROUP BY playerID ',[player_ID, player_ID]))
+    # visar namnet på spelaren i previous games
+    return render_template("previous_games.html", previousGames=query_db('SELECT * FROM previousGames INNER JOIN players ON previousGames.playerID = players.playerID WHERE previousGames.playerID = ?', [player_ID]), 
+    numOfGames=query_db('SELECT COUNT(?) AS numOfGames FROM previousGames WHERE playerID = ? GROUP BY playerID ',[player_ID, player_ID]),
+    avg_score=average_score(player_ID))
     
 
 
@@ -111,6 +117,11 @@ def redirect_html(filename):
         return send_from_directory("static", "index.html")
     return send_from_directory("static", filename + ".html")
 
+
+
+def average_score(playerID):
+    # procedure som räknar ut avh score på ens spelares games
+    return query_db("SELECT playerID, AVG(score) AS avgScore FROM previousGames WHERE playerID = ? GROUP BY playerID", [playerID])
 
 
 #@app.route('/booked_games')

@@ -43,8 +43,13 @@
 
     <div class="container mt-4">
         {% for num in numOfGames %}
-            <h1>Previous Games List, Total played games: {{num['numOfGames']}}</h1>
+            <h1>Previous Games List, Total played games: {{num['numOfGames']}} <br>
         {% endfor %}
+
+        {% for avg in avg_score %}
+            Average score: {{avg['avgScore']}}
+        {% endfor %}
+        </h1>
         <table>
             <thead>
                 <tr>
@@ -52,6 +57,7 @@
                     <th>date</th>
                     <th>score</th>
                     <th>playerID</th>
+                    <th>Name </th>
                 </tr>
             </thead>
             <tbody>
@@ -61,6 +67,8 @@
                         <td>{{ game['date'] }}</td>
                         <td>{{ game['score'] }}</td>
                         <td>{{ game['playerID'] }}</td>
+                        <td>{{ game['fName'] }}</td>
+                        
                     </tr>
                 {% endfor %}
             </tbody>
