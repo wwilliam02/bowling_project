@@ -3,12 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Logged In</title>
 </head>
 <body>
     <title>Logged-in Navigation</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation bar -->
@@ -33,19 +47,50 @@
                 <!-- Example: <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li> -->
             </ul>
         </div>
+        <form action="/logout" method="POST" class="ml-auto">
+            <button type="submit" class="btn btn-primary">Logout</button>
+        </form>
     </nav>
 
     <!-- Your page content goes here -->
-    <div style="padding: 20px;">
-        <!-- Add your content here -->
-        <h1>Welcome, {{ player_fname }}</h1>
-        <!-- Example: Display booked games, previous games, etc. -->
-    </div>
-    <h1>Hello {{player}} </h1>
-    <form action="/logout" method="POST">
-        <button type="submit">Logout</button>
-    </form>
+    <div class="container mt-4">
 
-    
+        
+        <!-- Add your content here -->
+        <h1>Welcome, {{ player }}</h1>
+        <!-- Example: Display booked games, previous games, etc. -->
+
+
+    <h3>Upcoming game</h3>
+    <div class="container">
+        <table class="table table-striped">
+            <thead class="thead-dark">
+            <tr>
+                
+                <th>Start time</th>
+                <th>End time</th>
+                <th>laneID</th>
+                <th>player ID</th>
+                <th>Date</th>
+                <th>Lane Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in next_game %}
+            <tr>
+                
+                <td>{{ booking['startTime'] }}</td>
+                <td>{{ booking['endTime'] }}</td>
+                <td>{{ booking['laneID'] }}</td>
+                <td>{{ booking['playerID'] }}</td>
+                <td>{{ booking['date'] }}</td>
+                <td>{{ booking['laneName'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+</div>
 </body>
 </html>
